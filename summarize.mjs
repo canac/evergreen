@@ -62,5 +62,7 @@ const title = count
   : "Ignore npm in Dependabot";
 const message = `${title}\n\n${bumps.join("\n")}`.trimEnd();
 
-writeFileSync(`${tmp}/body.md`, `## Resolved\n\n${list(resolved)}\n\n## Remaining\n\n${list(Object.values(after), whyRemaining)}\n`);
+const remaining = Object.values(after);
+const remainingSection = remaining.length ? `\n## Remaining\n\n${list(remaining, whyRemaining)}\n` : "";
+writeFileSync(`${tmp}/body.md`, `## Resolved\n\n${list(resolved)}\n${remainingSection}`);
 appendFileSync(process.env.GITHUB_OUTPUT, `title=${title}\ncommit-message<<MSG\n${message}\nMSG\n`);
