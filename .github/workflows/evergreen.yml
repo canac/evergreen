@@ -98,6 +98,7 @@ jobs:
       - uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ steps.app.outputs.token }}
+          sign-commits: true
           path: repo
           branch: evergreen/security-fixes
           title: ${{ steps.fix.outputs.title }}
