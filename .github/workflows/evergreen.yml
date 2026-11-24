@@ -107,3 +107,4 @@ jobs:
           title: ${{ steps.fix.outputs.title }}
           commit-message: ${{ steps.fix.outputs.commit-message }}
           body-path: ${{ runner.temp }}/body.md
+          reviewers: ${{ github.repository_owner }}
