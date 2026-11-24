@@ -44,7 +44,8 @@ const bumps = names.flatMap((name) => {
   const major = (v) => v.split(".")[0];
   const to = added.length ? added : [...now].filter((v) => removed.some((r) => major(r) === major(v)));
   if (!removed.length) return [];
-  return [to.length ? `Bump ${name} from ${removed.join(", ")} to ${to.join(", ")}` : `Remove ${name} ${removed.join(", ")}`];
+  const line = to.length ? `Bump ${name} from ${removed.join(", ")} to ${to.join(", ")}` : `Remove ${name} ${removed.join(", ")}`;
+  return [{ name, line }];
 });
 
 const order = ["critical", "high", "moderate", "low", "info"];
@@ -63,11 +64,13 @@ const list = (advisories, detail = () => "") => {
 const whyRemaining = (a) =>
   a.patched_versions ? `, patched in \`${a.patched_versions}\`` : ", no patch released";
 
-const count = bumps.length;
-const title = count
-  ? `Upgrade ${count} vulnerable ${count === 1 ? "dependency" : "dependencies"}`
-  : "Ignore npm in Dependabot";
-const message = `${title}\n\n${bumps.join("\n")}`.trimEnd();
+const title =
+  bumps.length === 0
+    ? "Disable npm Dependabot security PRs"
+    : bumps.length === 1
+      ? `Upgrade vulnerable ${bumps[0].name} dependency`
+      : `Upgrade ${bumps.length} vulnerable dependencies`;
+const message = `${title}\n\n${bumps.map((b) => b.line).join("\n")}`.trimEnd();
 
 const remaining = Object.values(after);
 const remainingSection = remaining.length ? `\n## Remaining\n\n${list(remaining, whyRemaining)}\n` : "";
