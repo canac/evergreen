@@ -2,6 +2,9 @@ name: Evergreen
 on:
   schedule:
     - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths: [.github/workflows/evergreen.yml, summarize.mjs]
   workflow_dispatch:
 permissions:
   contents: read
