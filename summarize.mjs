@@ -48,13 +48,20 @@ const bumps = names.flatMap((name) => {
 });
 
 const order = ["critical", "high", "moderate", "low", "info"];
-const list = (advisories, detail = () => "") =>
-  advisories
-    .sort((a, b) => order.indexOf(a.severity) - order.indexOf(b.severity))
-    .map((a) => `- \`${a.module_name}\` (${a.severity}): [${a.title}](${a.url})${detail(a)}`)
-    .join("\n") || "None";
+const bySeverity = (a, b) => order.indexOf(a.severity) - order.indexOf(b.severity);
+const list = (advisories, detail = () => "") => {
+  const packages = Map.groupBy(advisories.toSorted(bySeverity), (a) => a.module_name);
+  if (!packages.size) return "None";
+  return [...packages]
+    .map(([name, items]) => {
+      const summary = `${name} (${items[0].severity}, ${items.length} ${items.length === 1 ? "advisory" : "advisories"})`;
+      const lines = items.map((a) => `- [${a.title}](${a.url}) (${a.severity}${detail(a)})`).join("\n");
+      return `<details>\n<summary>${summary}</summary>\n\n${lines}\n\n</details>`;
+    })
+    .join("\n");
+};
 const whyRemaining = (a) =>
-  a.patched_versions ? ` (patched in \`${a.patched_versions}\`)` : " (no patch released)";
+  a.patched_versions ? `, patched in \`${a.patched_versions}\`` : ", no patch released";
 
 const count = bumps.length;
 const title = count
