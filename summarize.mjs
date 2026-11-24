@@ -51,7 +51,7 @@ const order = ["critical", "high", "moderate", "low", "info"];
 const list = (advisories, detail = () => "") =>
   advisories
     .sort((a, b) => order.indexOf(a.severity) - order.indexOf(b.severity))
-    .map((a) => `- **${a.severity}** \`${a.module_name}\`: [${a.title}](${a.url})${detail(a)}`)
+    .map((a) => `- \`${a.module_name}\` (${a.severity}): [${a.title}](${a.url})${detail(a)}`)
     .join("\n") || "None";
 const whyRemaining = (a) =>
   a.patched_versions ? ` (patched in \`${a.patched_versions}\`)` : " (no patch released)";
